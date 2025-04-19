@@ -2,6 +2,13 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL2_gfxPrimitives.h>  // <-- Aqui!
 #include <iostream>
+#include <vector>
+
+struct Nuvem {
+    float x, y;
+    float velocidade;
+    int largura, altura;
+};
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -27,7 +34,37 @@ void drawSun(SDL_Renderer* renderer, int x, int y, int radius) {
     filledCircleRGBA(renderer, x, y, radius, 255, 223, 0, 255);  // Amarelo forte
 }
 
+// Função para desenhar nuvens
+void desenharNuvens(SDL_Renderer* renderer, std::vector<Nuvem>& nuvens) {
+    for (auto& nuvem : nuvens) {
+        int x = (int)nuvem.x;
+        int y = (int)nuvem.y;
+        int corR = 255, corG = 255, corB = 255, alpha = 200;
+
+        // Desenha "gominhos" da nuvem
+        filledCircleRGBA(renderer, x, y, 20, corR, corG, corB, alpha);
+        filledCircleRGBA(renderer, x + 25, y - 10, 25, corR, corG, corB, alpha);
+        filledCircleRGBA(renderer, x + 50, y, 20, corR, corG, corB, alpha);
+        filledCircleRGBA(renderer, x + 20, y + 10, 22, corR, corG, corB, alpha);
+
+        // Movimento
+        nuvem.x += nuvem.velocidade;
+
+        if (nuvem.x - 60 > WIDTH) {
+            nuvem.x = -60;
+        }
+    }
+}
+
+
 int main() {
+    // Criando nuvens
+    std::vector<Nuvem> nuvens = {
+        { -100, 120, 0.2f, 120, 40 },
+        { 300, 180, 0.1f, 150, 50 },
+        { 600, 100, 0.15f, 100, 35 }
+    };
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         std::cerr << "Erro SDL: " << SDL_GetError() << std::endl;
         return 1;
@@ -69,6 +106,9 @@ int main() {
 
         // Desenha o sol
         drawSun(renderer, WIDTH / 2, sunY, 50);
+
+        // Desenha nuvens
+        desenharNuvens(renderer, nuvens);
 
         // Atualiza a tela
         SDL_RenderPresent(renderer);
