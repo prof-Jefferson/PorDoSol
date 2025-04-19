@@ -8,6 +8,8 @@ const int HEIGHT = 600;
 
 // Posição inicial do sol (mais tarde animaremos isso)
 int sunY = 100;
+int sunSpeed = 1;     // velocidade de descida (pixels por frame)
+int sunLimit = HEIGHT + 50;  // ponto em que o sol "sai da tela"
 
 // Função para desenhar o fundo em degradê
 void drawGradientBackground(SDL_Renderer* renderer) {
@@ -36,7 +38,7 @@ int main() {
         return 1;
     }
 
-    Mix_Music* music = Mix_LoadMUS("assets/Music.mp3");
+    Mix_Music* music = Mix_LoadMUS("assets/music.ogg");
     if (music) {
         Mix_PlayMusic(music, -1);
     } else {
@@ -52,6 +54,11 @@ int main() {
     bool running = true;
     SDL_Event event;
     while (running) {
+        // Atualizar posição do sol
+        if (sunY < sunLimit) {
+            sunY += sunSpeed;
+        }
+
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT)
                 running = false;
