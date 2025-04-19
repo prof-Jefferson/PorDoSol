@@ -14,7 +14,7 @@ const int WIDTH = 800;
 const int HEIGHT = 600;
 
 // Posição inicial do sol (mais tarde animaremos isso)
-int sunY = 100;
+float sunY = 100.0f;
 int sunSpeed = 1;     // velocidade de descida (pixels por frame)
 int sunLimit = HEIGHT + 50;  // ponto em que o sol "sai da tela"
 
@@ -93,7 +93,8 @@ int main() {
     while (running) {
         // Atualizar posição do sol
         if (sunY < sunLimit) {
-            sunY += sunSpeed;
+            float t = 0.01f; // fator de suavização (quanto menor, mais lento)
+            sunY = (sunY + (sunLimit - sunY) * t);
         }
 
         while (SDL_PollEvent(&event)) {
@@ -105,7 +106,8 @@ int main() {
         drawGradientBackground(renderer);
 
         // Desenha o sol
-        drawSun(renderer, WIDTH / 2, sunY, 50);
+        drawSun(renderer, WIDTH / 2, (int)sunY, 50);
+
 
         // Desenha nuvens
         desenharNuvens(renderer, nuvens);
